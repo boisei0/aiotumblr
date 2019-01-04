@@ -1,8 +1,9 @@
 # encoding=utf-8
 from .base import Extension, POST_TYPES, NPF_POST_STATES
+from .utils import create_method
 
 METHOD_PREFIX = 'public'
-endpoints = [
+_ENDPOINTS = [
     {
         'method_name': 'get_blog_info',
         'http_method': 'GET',
@@ -63,7 +64,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'get_blog_following',
+        'method_name': 'get_blog_following',
         'http_method': 'GET',
         'endpoint': 'blog/{blog_identifier}/following',
         'url_parameters': ['blog_identifier'],
@@ -83,7 +84,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'get_blog_followers',
+        'method_name': 'get_blog_followers',
         'http_method': 'GET',
         'endpoint': 'blog/{blog_identifier}/followers',
         'url_parameters': ['blog_identifier'],
@@ -103,7 +104,7 @@ endpoints = [
         'Body_type': None,
     },
     {
-        'method': 'get_blog_posts',
+        'method_name': 'get_blog_posts',
         'http_method': 'GET',
         'endpoint': 'blog/{blog_identifier}/posts',
         'url_parameters': ['blog_identifier'],
@@ -157,7 +158,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'get_blog_queue',
+        'method_name': 'get_blog_queue',
         'http_method': 'GET',
         'endpoint': 'blog/{blog_identifier}/posts/queue',
         'url_parameters': ['blog_identifier'],
@@ -184,7 +185,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'get_blog_drafts',
+        'method_name': 'get_blog_drafts',
         'http_method': 'GET',
         'endpoint': 'blog/{blog_identifier}/posts/draft',
         'url_parameters': ['blog_identifier'],
@@ -205,7 +206,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'get_blog_submissions',
+        'method_name': 'get_blog_submissions',
         'http_method': 'GET',
         'endpoint': 'blog/{blog_identifier}/posts/submission',
         'url_parameters': ['blog_identifier'],
@@ -226,7 +227,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'create_post',
+        'method_name': 'create_post',
         'http_method': 'POST',
         'endpoint': 'blog/{blog_identifier}/posts',
         'url_parameters': ['blog_identifier'],
@@ -271,7 +272,7 @@ endpoints = [
         'body_type': 'json',
     },
     {
-        'method': 'reblog_post',
+        'method_name': 'reblog_post',
         'http_method': 'POST',
         'endpoint': 'blog/{blog_identifier}/posts',
         'url_parameters': ['blog_identifier'],
@@ -329,7 +330,7 @@ endpoints = [
         'body_type': 'json',
     },
     {
-        'method': 'fetch_post',
+        'method_name': 'fetch_post',
         'http_method': 'GET',
         'endpoint': 'blog/{blog_identifier}/posts/{post_id}',
         'url_parameters': ['blog_identifier', 'post_id'],
@@ -339,7 +340,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'edit_post',
+        'method_name': 'edit_post',
         'http_method': 'PUT',
         'endpoint': 'blog/{blog_identifier}/posts/{post_id}',
         'url_parameters': ['blog_identifier', 'post_id'],
@@ -349,7 +350,7 @@ endpoints = [
         'body_type': 'json'
     },
     {
-        'method': 'delete_post',
+        'method_name': 'delete_post',
         'http_method': 'POST',
         'endpoint': 'blog/{blog_identifier}/post/delete',
         'url_parameters': ['blog_identifier'],
@@ -363,7 +364,7 @@ endpoints = [
         'body_type': 'kv',
     },
     {
-        'method': 'get_user_info',
+        'method_name': 'get_user_info',
         'http_method': 'GET',
         'endpoint': 'user/info',
         'url_parameters': [],
@@ -375,7 +376,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'get_user_dashboard',
+        'method_name': 'get_user_dashboard',
         'http_method': 'GET',
         'endpoint': 'user/dashboard',
         'params': {
@@ -414,7 +415,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'get_user_likes',
+        'method_name': 'get_user_likes',
         'http_method': 'GET',
         'endpoint': 'user/likes',
         'url_parameters': [],
@@ -443,7 +444,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'get_user_following',
+        'method_name': 'get_user_following',
         'http_method': 'GET',
         'endpoint': 'user/following',
         'url_parameters': [],
@@ -463,7 +464,7 @@ endpoints = [
         'body_type': None,
     },
     {
-        'method': 'follow_blog',
+        'method_name': 'follow_blog',
         'http_method': 'POST',
         'endpoint': 'user/follow',
         'url_parameters': [],
@@ -477,7 +478,7 @@ endpoints = [
         'body_type': 'kv',
     },
     {
-        'method': 'unfollow_blog',
+        'method_name': 'unfollow_blog',
         'http_method': 'POST',
         'endpoint': 'user/unfollow',
         'url_parameters': [],
@@ -491,7 +492,7 @@ endpoints = [
         'body_type': 'kv',
     },
     {
-        'method': 'like_post',
+        'method_name': 'like_post',
         'http_method': 'POST',
         'endpoint': 'user/like',
         'url_parameters': [],
@@ -508,7 +509,7 @@ endpoints = [
         'body_type': 'kv',
     },
     {
-        'method': 'unlike_post',
+        'method_name': 'unlike_post',
         'http_method': 'POST',
         'endpoint': 'user/unlike',
         'url_parameters': [],
@@ -528,18 +529,44 @@ endpoints = [
 
 
 class PublicAPI(Extension):
-    def __init__(self):
-        super().__init__(METHOD_PREFIX)
+    prefix = METHOD_PREFIX
 
     @classmethod
     def register(cls, client):
-        for method_info in endpoints:
+        for method_info in _ENDPOINTS:
             _params = method_info['params']
+            _required_params = []
+            _optional_params = []
             if _params:
-                pass  # TODO: continue here
+                for _param, val in _params.items():
+                    if val['required']:
+                        _required_params.append(_param)
+                    else:
+                        _optional_params.append(_param)
 
-            # async def method(self, *args, **kwargs):
-            #     client.request(method_info['http_method'], method_info['endpoint'], )
-            #
-            # setattr(client, method_info['method'], method)
-        pass
+            _body = method_info['body']
+            _required_body = []
+            _optional_body = []
+            if _body:
+                for _key, val in _body.items():
+                    if val['required']:
+                        _required_body.append(_key)
+                    else:
+                        _optional_body.append(_key)
+
+            params = {
+                'required': _required_params,
+                'optional': _optional_params,
+                'data': _params,
+            }
+            body = {
+                'required': _required_body,
+                'optional': _optional_body,
+                'data': _body
+            }
+            create_method(client, params, body, method_info)
+
+    @classmethod
+    def unregister(cls, client):
+        for method_info in _ENDPOINTS:
+            delattr(client, method_info['method_name'])

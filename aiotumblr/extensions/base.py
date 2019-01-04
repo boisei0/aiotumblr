@@ -21,12 +21,10 @@ NPF_POST_STATES = [
 
 
 class Extension(object):
-    def __init__(self, method_prefix: str):
-        self.prefix = method_prefix
-        raise NotImplementedError()  # TODO
-
-    def register(self, client):
+    @classmethod
+    def register(cls, client):
         raise NotImplementedError()
 
-    def unregister(self, client):
+    @classmethod
+    def unregister(cls, client):
         raise NotImplementedError()
