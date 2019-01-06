@@ -103,3 +103,6 @@ class TumblrClient(object):
     @classmethod
     def unregister_extension(cls, extension: Extension):
         extension.unregister(cls)
+
+    async def close_connection(self):
+        await self.session.close()

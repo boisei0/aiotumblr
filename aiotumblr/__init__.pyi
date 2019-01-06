@@ -1,11 +1,20 @@
 # encoding=utf-8
 # Stubs for the aiotumblr.TumblrClient core class, with the idea that the public API is already hooked on it
 from typing import Dict, List, Tuple, Optional, Any, Union
-from aiohttp import ClientResponse
+
+from aiohttp import ClientResponse, ClientSession
+from oauthlib.oauth1 import Client
 
 from .extensions import Extension
 
 class TumblrClient:
+    session: ClientSession
+    oauth_client: Client
+    api_base_url: str
+    request_token_url: str
+    authorization_url: str
+    access_token_url: str
+
     def __init__(self, consumer_key: str, consumer_secret: str, resource_owner_key: str = None,
                  resource_owner_secret: str = None, callback_uri: str = None, oauth_verifier: str = None): ...
 
@@ -26,6 +35,8 @@ class TumblrClient:
 
     @classmethod
     def unregister_extension(cls, extension: Extension): ...
+
+    async def close_connection(self) -> None: ...
 
     # The following methods are defined dynamically in aiotumblr.extensions.public
     async def get_blog_info(self, blog_identifier: str) -> ClientResponse: ...
@@ -101,4 +112,4 @@ class TumblrClient:
 
     async def like_post(self, id: int, reblog_key: str) -> ClientResponse: ...
 
-    async def unike_post(self, id: int, reblog_key: str) -> ClientResponse: ...
+    async def unlike_post(self, id: int, reblog_key: str) -> ClientResponse: ...
