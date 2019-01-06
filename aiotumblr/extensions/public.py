@@ -339,16 +339,16 @@ _ENDPOINTS = [
         'body': None,
         'body_type': None,
     },
-    {
-        'method_name': 'edit_post',
-        'http_method': 'PUT',
-        'endpoint': 'blog/{blog_identifier}/posts/{post_id}',
-        'url_parameters': ['blog_identifier', 'post_id'],
-        'params': {},
-        'content_type': 'application/json',
-        'body': {},  # TODO: implement from create_post/reblog_post
-        'body_type': 'json'
-    },
+    # {
+    #     'method_name': 'edit_post',
+    #     'http_method': 'PUT',
+    #     'endpoint': 'blog/{blog_identifier}/posts/{post_id}',
+    #     'url_parameters': ['blog_identifier', 'post_id'],
+    #     'params': {},
+    #     'content_type': 'application/json',
+    #     'body': {},  # TODO: implement from create_post/reblog_post
+    #     'body_type': 'json'
+    # },
     {
         'method_name': 'delete_post',
         'http_method': 'POST',

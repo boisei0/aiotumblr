@@ -1,4 +1,5 @@
 # encoding=utf-8
+from typing import Dict, List, Tuple, Any, Optional
 from urllib.parse import urlparse
 
 import aiohttp
@@ -27,7 +28,7 @@ class TumblrClient(object):
             verifier=oauth_verifier,
         )
 
-    async def fetch_request_token(self):
+    async def fetch_request_token(self) -> Dict[str, str]:
         _, signed_headers, _ = self.oauth_client.sign(self.request_token_url, 'POST')
 
         resp = await self.session.post(self.request_token_url, headers=signed_headers)
@@ -42,13 +43,13 @@ class TumblrClient(object):
 
         return token
 
-    def fetch_authorization_url(self, request_token=None):
+    def fetch_authorization_url(self, request_token: str = None) -> str:
         if not request_token:
             request_token = self.oauth_client.resource_owner_key
 
         return f'{self.authorization_url}?oauth_token={request_token}'
 
-    def parse_authorization_response(self, url):
+    def parse_authorization_response(self, url: str) -> Dict[str, str]:
         token = dict(urldecode(urlparse(url).query))
 
         self.oauth_client.resource_owner_key = token['oauth_token']
@@ -56,7 +57,7 @@ class TumblrClient(object):
 
         return token
 
-    async def fetch_access_token(self, verifier=None):
+    async def fetch_access_token(self, verifier: Optional[str] = None) -> Dict[str, str]:
         if verifier:
             self.oauth_client.verifier = verifier
         if not getattr(self.oauth_client, 'verifier', None):
@@ -73,8 +74,9 @@ class TumblrClient(object):
 
         return token
 
-    async def signed_request(self, method: str, endpoint: str, params: dict = None, data: dict = None, json=None,
-                             headers: dict = None, **kwargs):
+    async def signed_request(self, method: str, endpoint: str, params: Optional[List[Tuple[str, str]]] = None,
+                             data: Optional[Dict[str, str]] = None, json: Optional[Any] = None,
+                             headers: Optional[Dict[str, str]] = None, **kwargs) -> aiohttp.ClientResponse:
         url = self.api_base_url + endpoint
 
         if data:
