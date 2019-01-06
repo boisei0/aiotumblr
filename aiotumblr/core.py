@@ -9,7 +9,7 @@ from oauthlib.common import urldecode, add_params_to_uri
 from .extensions.base import Extension
 
 
-class AIOTumblr(object):
+class TumblrClient(object):
     api_base_url = 'https://api.tumblr.com/v2/'
     request_token_url = 'https://www.tumblr.com/oauth/request_token'
     authorization_url = 'http://www.tumblr.com/oauth/authorize'

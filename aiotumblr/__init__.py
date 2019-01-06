@@ -1,6 +1,6 @@
 # encoding=utf-8
 from .extensions import PublicAPI
-from .core import AIOTumblr
+from .core import TumblrClient
 
-AIOTumblr.register_extension(PublicAPI)
+TumblrClient.register_extension(PublicAPI)
 
