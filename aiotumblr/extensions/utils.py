@@ -1,3 +1,10 @@
+# encoding=utf-8
+def format_parameter(param):
+    if isinstance(param, bool):
+        return str(param).lower()
+    return param
+
+
 def create_method(client, params, body, method_info):
     async def inner_method(self, **kwargs):
         # Verify signature
@@ -14,10 +21,10 @@ def create_method(client, params, body, method_info):
         for param in params['required']:
             if param not in kwargs:
                 raise RuntimeError(f'Parameter {param!r} is a required keyword argument')
-            params_signature.append((param, kwargs[param]))
+            params_signature.append((param, format_parameter(kwargs[param])))
         for param in params['optional']:
             if param in kwargs:
-                params_signature.append((param, kwargs[param]))
+                params_signature.append((param, format_parameter(kwargs[param])))
 
         # Verify body
         # TODO: Add validator check
