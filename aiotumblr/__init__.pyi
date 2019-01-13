@@ -15,8 +15,9 @@ class TumblrClient:
     authorization_url: str
     access_token_url: str
 
-    def __init__(self, consumer_key: str, consumer_secret: str, resource_owner_key: str = None,
-                 resource_owner_secret: str = None, callback_uri: str = None, oauth_verifier: str = None): ...
+    def __init__(self, consumer_key: str, consumer_secret: str, resource_owner_key: Optional[str] = None,
+                 resource_owner_secret: Optional[str] = None, callback_uri: Optional[str] = None,
+                 oauth_verifier: Optional[str] = None, debug_mode: Optional[bool] = None): ...
 
     async def fetch_request_token(self) -> Dict[str, str]: ...
 
