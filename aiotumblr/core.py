@@ -1,5 +1,5 @@
 # encoding=utf-8
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, List, Tuple, Any, Optional, Type
 from urllib.parse import urlparse
 
 import aiohttp
@@ -126,11 +126,11 @@ class TumblrClient(object):
             return await self.session.request(method, url, params=params, headers=signed_headers)
 
     @classmethod
-    def register_extension(cls, extension: Extension):
+    def register_extension(cls, extension: Type[Extension]):
         extension.register(cls)
 
     @classmethod
-    def unregister_extension(cls, extension: Extension):
+    def unregister_extension(cls, extension: Type[Extension]):
         extension.unregister(cls)
 
     async def close_connection(self):

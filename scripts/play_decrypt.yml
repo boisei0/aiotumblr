@@ -1,0 +1,55 @@
+---
+- name: Decrypt internal api extension with the project vault key
+  hosts: 127.0.0.1
+  connection: local
+
+  vars_files:
+    - vars/external_vars.yml
+
+  tasks:
+    - name: Get local pwd
+      command: "echo {{ lookup('env', 'PWD') }}"
+      register: pwd
+
+    - name: Sync the lastpass database
+      command: lpass sync
+
+    - name: Get the vault password from lastpass
+      command: lpass show -F {{ vault_key }} --password
+      register: vault_password
+
+    - name: Find the extensions
+      find:
+        paths: "{{ '/'.join((pwd.stdout, 'aiotumblr', 'extensions')) }}"
+        patterns: 'internal*.py'
+      register: extensions
+
+    - name: Check if extensions are already decrypted
+      lineinfile:
+        name: "{{ item.path }}"
+        state: present
+        regexp: '^\$ANSIBLE_VAULT.*$'
+        line: 'not needed because failing if not present :)'
+      check_mode: yes
+      register: res_ext_encrypted
+      failed_when: (res_ext_encrypted is changed) or (res_ext_encrypted is failed)
+      ignore_errors: yes
+      with_items:
+        - "{{ extensions.files }}"
+
+    - name: Decrypt the extensions that are encrypted
+      shell: |
+        spawn ansible-vault decrypt "{{ item.item.path }}"
+
+        expect "Vault password:"
+        send "{{ vault_password.stdout }}\n"
+
+        expect "Decryption successful"
+
+        exit 0
+      args:
+        executable: /usr/bin/expect
+        chdir: "{{ '/'.join((pwd.stdout, 'aiotumblr', 'extensions')) }}"
+      when: (item is failed) and (item.msg != 'line added')
+      with_items:
+        - "{{ res_ext_encrypted.results }}"

@@ -101,7 +101,7 @@ _ENDPOINTS = [
         },
         'content_type': None,
         'body': None,
-        'Body_type': None,
+        'body_type': None,
     },
     {
         'method_name': 'get_blog_posts',
