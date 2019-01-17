@@ -32,10 +32,12 @@ def create_method(client, params, body, method_info):
         for key in body['required']:
             if key not in kwargs:
                 raise RuntimeError(f'Body key {key!r} is a required keyword argument')
-            body_signature[key] = kwargs[key]
+            body_signature[key] = kwargs[key] if method_info['body_type'] == 'json' else \
+                format_parameter(kwargs[key])
         for key in body['optional']:
             if key in kwargs:
-                body_signature[key] = kwargs[key]
+                body_signature[key] = kwargs[key] if method_info['body_type'] == 'json' else \
+                    format_parameter(kwargs[key])
 
         if method_info['http_method'] in ['POST', 'PUT', 'PATCH']:
             # Have a body
