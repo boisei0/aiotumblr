@@ -77,35 +77,32 @@ def generate_docstring(params, body, method_info) -> str:
 :type {key}: {opt_body_arg['type'].__name__} or None""")
     ds_optional_body_args = '\n'.join(optional_body_args)
 
-    # TODO: Is there an easy way to DRY this without an additional dependency as Jinja?
+    ds = f"""{method_info['description_summary']}"""
+
     if method_info['description_long']:
-        return f"""{method_info['description_summary']}
+        ds += f"""\n\n{method_info['description_long']}"""
 
-{method_info['description_long']}
+    ds += f"""\n\n{ds_url_params}"""
 
-{ds_url_params}
-{ds_required_params}
-{ds_optional_params}
-{ds_required_body_args}
-{ds_optional_body_args}
-:return: API response for {method_info['method_name']}
+    if ds_required_params:
+        ds += f"""{ds_required_params}"""
+
+    if ds_optional_params:
+        ds += f"""\n{ds_optional_params}"""
+
+    if ds_required_body_args:
+        ds += f"""\n{ds_required_body_args}"""
+
+    if ds_optional_body_args:
+        ds += f"""\n{ds_optional_body_args}"""
+
+    ds += f""":return: API response for {method_info['method_name']}
 :rtype: `aiohttp.ClientResponse`
 :raises SyntaxError: if required parameter is missing
 :raises ValueError: if supplied parameter fails validation
 """
-    else:
-        return f"""{method_info['description_summary']}
 
-{ds_url_params}
-{ds_required_params}
-{ds_optional_params}
-{ds_required_body_args}
-{ds_optional_body_args}
-:return: API response for {method_info['method_name']}
-:rtype: `aiohttp.ClientResponse`
-:raises SyntaxError: if required parameter is missing
-:raises ValueError: if supplied parameter fails validation
-"""
+    return ds
 
 
 def create_method(client, params, body, method_info):
@@ -132,14 +129,6 @@ def create_method(client, params, body, method_info):
             else:
                 _sig_body_opt.append(forge.kwo(name=_key, type=_body_item['type'], default=None))
 
-    @forge.sign(
-        forge.pos(name='self'),
-        *_sig_url_params,
-        *_sig_params_req,
-        *_sig_body_req,
-        *_sig_params_opt,
-        *_sig_body_opt,
-    )
     async def inner_method(self, **kwargs):
         # Verify signature
         endpoint_signature = {}
@@ -250,5 +239,15 @@ def create_method(client, params, body, method_info):
 
         return resp
 
-    inner_method.__doc__ = generate_docstring(params, body, method_info)
-    setattr(client, method_info['method_name'], inner_method)
+    revised = forge.sign(
+        forge.pos(name='self'),
+        *_sig_url_params,
+        *_sig_params_req,
+        *_sig_body_req,
+        *_sig_params_opt,
+        *_sig_body_opt,
+    )(inner_method)
+    revised.__name__ = method_info['method_name']
+
+    revised.__doc__ = generate_docstring(params, body, method_info)
+    setattr(client, method_info['method_name'], revised)
