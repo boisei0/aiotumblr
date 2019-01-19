@@ -1,6 +1,8 @@
 # encoding=utf-8
 from typing import Dict, Any, Tuple, Union
 
+import forge
+
 
 def format_parameter(param):
     if isinstance(param, bool):
@@ -44,12 +46,8 @@ def parse_method_info(method_info: Dict[str, Any]) -> Tuple[Dict[str, Union[list
 
 
 def generate_docstring(params, body, method_info) -> str:
-    try:
-        ds_url_params = '\n'.join(f""":param {key}: {url_param['description']}
+    ds_url_params = '\n'.join(f""":param {key}: {url_param['description']}
 :type {key} {url_param['type'].__name__}""" for key, url_param in method_info['url_parameters'].items())
-    except (TypeError, KeyError):
-        print(method_info)
-        raise
 
     required_params = []
     for key in params['required']:
@@ -111,6 +109,37 @@ def generate_docstring(params, body, method_info) -> str:
 
 
 def create_method(client, params, body, method_info):
+    _sig_url_params = []
+    _sig_params_req = []
+    _sig_params_opt = []
+    _sig_body_req = []
+    _sig_body_opt = []
+
+    for _key, _url_param in method_info['url_parameters'].items():
+        _sig_url_params.append(forge.arg(name=_key, type=_url_param['type']))
+
+    if params['data']:
+        for _key, _param_item in params['data'].items():
+            if _param_item['required']:
+                _sig_params_req.append(forge.arg(name=_key, type=_param_item['type']))
+            else:
+                _sig_params_opt.append(forge.kwo(name=_key, type=_param_item['type'], default=None))
+
+    if body['data']:
+        for _key, _body_item in body['data'].items():
+            if _body_item['required']:
+                _sig_body_req.append(forge.arg(name=_key, type=_body_item['type']))
+            else:
+                _sig_body_opt.append(forge.kwo(name=_key, type=_body_item['type'], default=None))
+
+    @forge.sign(
+        forge.pos(name='self'),
+        *_sig_url_params,
+        *_sig_params_req,
+        *_sig_body_req,
+        *_sig_params_opt,
+        *_sig_body_opt,
+    )
     async def inner_method(self, **kwargs):
         # Verify signature
         endpoint_signature = {}

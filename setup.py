@@ -12,5 +12,5 @@ setup(
         'Programming Language :: Python :: 3.7'
     ],
     packages=['aiotumblr'],
-    install_requires=['aiohttp', 'oauthlib']
+    install_requires=['aiohttp', 'oauthlib', 'python-forge']
 )

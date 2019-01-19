@@ -9,6 +9,7 @@ mypy = "*"
 [packages]
 aiohttp = "*"
 oauthlib = "*"
+python-forge = "*"
 
 [requires]
 python_version = "3.7"
