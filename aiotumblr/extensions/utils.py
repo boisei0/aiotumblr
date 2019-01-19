@@ -179,7 +179,7 @@ def create_method(client, params, body, method_info):
 
             params_signature.append((param, format_parameter(item)))
         for param in params['optional']:
-            if param in kwargs:
+            if param in kwargs and kwargs[param] is not None:
                 if 'validator' in params['data'][param]:
                     tested = params['data'][param]['validator'](kwargs[param])
                     if not tested:
@@ -212,7 +212,7 @@ def create_method(client, params, body, method_info):
                 format_parameter(item)
 
         for key in body['optional']:
-            if key in kwargs:
+            if key in kwargs and kwargs[key] is not None:
                 if 'validator' in body['data'][key]:
                     tested = body['data'][key]['validator'](kwargs[key])
                     if not tested:
