@@ -338,178 +338,295 @@ _ENDPOINTS = [
         'body': None,
         'body_type': None,
     },
-    # {
-    #     'method_name': 'get_blog_queue',
-    #     'http_method': 'GET',
-    #     'endpoint': 'blog/{blog_identifier}/posts/queue',
-    #     'url_parameters': ['blog_identifier'],
-    #     'params': {
-    #         'limit': {
-    #             'required': False,
-    #             'default': 20,
-    #             'validator': lambda x: 1 <= x <= 20,
-    #         },
-    #         'offset': {
-    #             'required': False,
-    #             'default': 0,
-    #             # Validator? Max limit of 1000? No clue because look, lack of documentation
-    #         },
-    #         'filter': {
-    #             'required': False,
-    #             'default': None,
-    #             # and if you believe the internals, 'clean' is an option too ¯\_(ツ)_/¯
-    #             'validator': lambda x: x in [None, 'text', 'raw'],
-    #         },
-    #     },
-    #     'content_type': None,
-    #     'body': None,
-    #     'body_type': None,
-    # },
-    # {
-    #     'method_name': 'get_blog_drafts',
-    #     'http_method': 'GET',
-    #     'endpoint': 'blog/{blog_identifier}/posts/draft',
-    #     'url_parameters': ['blog_identifier'],
-    #     'params': {
-    #         'before_id': {
-    #             'required': False,
-    #             'default': 0,
-    #         },
-    #         'filter': {
-    #             'required': False,
-    #             'default': None,
-    #             # and if you believe the internals, 'clean' is an option too ¯\_(ツ)_/¯
-    #             'validator': lambda x: x in [None, 'text', 'raw'],
-    #         },
-    #     },
-    #     'content_type': None,
-    #     'body': None,
-    #     'body_type': None,
-    # },
-    # {
-    #     'method_name': 'get_blog_submissions',
-    #     'http_method': 'GET',
-    #     'endpoint': 'blog/{blog_identifier}/posts/submission',
-    #     'url_parameters': ['blog_identifier'],
-    #     'params': {
-    #         'offset': {
-    #             'required': False,
-    #             'default': 0
-    #         },
-    #         'filter': {
-    #             'required': False,
-    #             'default': None,
-    #             # and if you believe the internals, 'clean' is an option too ¯\_(ツ)_/¯
-    #             'validator': lambda x: x in [None, 'text', 'raw'],
-    #         },
-    #     },
-    #     'content_type': None,
-    #     'body': None,
-    #     'body_type': None,
-    # },
-    # {
-    #     'method_name': 'create_post',
-    #     'http_method': 'POST',
-    #     'endpoint': 'blog/{blog_identifier}/posts',
-    #     'url_parameters': ['blog_identifier'],
-    #     'params': {},
-    #     'content_type': 'application/json',
-    #     'body': {
-    #         'content': {
-    #             'required': True,
-    #             'validator': lambda x: isinstance(x, list),
-    #         },
-    #         'layout': {
-    #             'required': False,
-    #             'default': [],
-    #             'validator': lambda x: isinstance(x, list),
-    #         },
-    #         'state': {
-    #             'required': False,
-    #             'default': 'published',
-    #             'validator': lambda x: x in NPF_POST_STATES,
-    #         },
-    #         'publish_on': {
-    #             'required': False,
-    #             'default': None,
-    #         },
-    #         'tags': {
-    #             'required': False,
-    #             'default': None,
-    #         },
-    #         'source_url': {
-    #             'required': False,
-    #             'default': None,
-    #         },
-    #         'send_to_twitter': {
-    #             'required': False,
-    #             'default': False,  # no but actually, get_user_info()[blog_identifier]['twitter_send']
-    #         },
-    #         'send_to_facebook': {
-    #             'required': False,
-    #             'default': False,  # no but actually, get_user_info()[blog_identifier]['facebook_send']
-    #         },
-    #     },
-    #     'body_type': 'json',
-    # },
-    # {
-    #     'method_name': 'reblog_post',
-    #     'http_method': 'POST',
-    #     'endpoint': 'blog/{blog_identifier}/posts',
-    #     'url_parameters': ['blog_identifier'],
-    #     'params': {},
-    #     'content_type': 'application/json',
-    #     'body': {
-    #         'parent_tumblelog_uuid': {
-    #             'required': True,
-    #         },
-    #         'parent_post_id': {
-    #             'required': True,
-    #         },
-    #         'reblog_key': {
-    #             'required': True,
-    #         },
-    #         'content': {
-    #             'required': True,
-    #             'validator': lambda x: isinstance(x, list),
-    #         },
-    #         'layout': {
-    #             'required': False,
-    #             'default': [],
-    #             'validator': lambda x: isinstance(x, list),
-    #         },
-    #         'state': {
-    #             'required': False,
-    #             'default': 'published',
-    #             'validator': lambda x: x in NPF_POST_STATES,
-    #         },
-    #         'publish_on': {
-    #             'required': False,
-    #             'default': None,
-    #         },
-    #         'tags': {
-    #             'required': False,
-    #             'default': None,
-    #         },
-    #         'source_url': {
-    #             'required': False,
-    #             'default': None,
-    #         },
-    #         'send_to_twitter': {
-    #             'required': False,
-    #             'default': False,  # no but actually, get_user_info()[blog_identifier]['twitter_send']
-    #         },
-    #         'send_to_facebook': {
-    #             'required': False,
-    #             'default': False,  # no but actually, get_user_info()[blog_identifier]['facebook_send']
-    #         },
-    #         'hide_trail': {
-    #             'required': False,
-    #             'default': False,
-    #         },
-    #     },
-    #     'body_type': 'json',
-    # },
+    {
+        'method_name': 'get_blog_queue',
+        'description_short': 'Retrieve Queued Posts',
+        'description_long': None,
+        'http_method': 'GET',
+        'endpoint': 'blog/{blog_identifier}/posts/queue',
+        'url_parameters': {
+            'blog_identifier': {
+                'type': str,
+                'description': 'The blog whose queue is requested',
+                'validator': validate_blog_identifier,
+            },
+        },
+        'params': {
+            'limit': {
+                'required': False,
+                'description': 'The number of results to return: 1–20, inclusive',
+                'type': int,
+                'default': 20,
+                'validator': lambda x: 1 <= x <= 20,
+            },
+            'offset': {
+                'required': False,
+                'description': 'Post number to start at',
+                'type': int,
+                'default': 0,
+                # Validator? Max limit of 1000? No clue because look, lack of documentation
+            },
+            'filter': {
+                'required': False,
+                'description': 'Specifies the post format to return, other than HTML: text – Plain text, no HTML; '
+                               'raw – As entered by the user (no post-processing); if the user writes in Markdown, '
+                               'the Markdown will be returned rather than HTML',
+                'type': str,
+                'default': None,
+                # and if you believe the internals, 'clean' is an option too ¯\_(ツ)_/¯
+                'validator': lambda x: x in [None, 'text', 'raw'],
+            },
+        },
+        'content_type': None,
+        'body': None,
+        'body_type': None,
+    },
+    {
+        'method_name': 'get_blog_drafts',
+        'description_summary': 'Retrieve Draft Posts',
+        'description_long': None,
+        'http_method': 'GET',
+        'endpoint': 'blog/{blog_identifier}/posts/draft',
+        'url_parameters': {
+            'blog_identifier': {
+                'type': str,
+                'description': 'The blog whose drafts are requested',
+                'validator': validate_blog_identifier,
+            },
+        },
+        'params': {
+            'before_id': {
+                'required': False,
+                'description': 'Return posts that have appeared before this ID; Use this parameter to page through '
+                               'the results: first get a set of posts, and then get posts since the last ID '
+                               'of the previous set.',
+                'type': int,
+                'default': 0,
+            },
+            'filter': {
+                'required': False,
+                'description': 'Specifies the post format to return, other than HTML: text – Plain text, no HTML; '
+                               'raw – As entered by the user (no post-processing); if the user writes in Markdown, '
+                               'the Markdown will be returned rather than HTML',
+                'type': str,
+                'default': None,
+                # and if you believe the internals, 'clean' is an option too ¯\_(ツ)_/¯
+                'validator': lambda x: x in [None, 'text', 'raw'],
+            },
+        },
+        'content_type': None,
+        'body': None,
+        'body_type': None,
+    },
+    {
+        'method_name': 'get_blog_submissions',
+        'description_summary': 'Retrieve Submission Posts',
+        'description_long': None,
+        'http_method': 'GET',
+        'endpoint': 'blog/{blog_identifier}/posts/submission',
+        'url_parameters': {
+            'blog_identifier': {
+                'type': str,
+                'description': 'The blog whose submissions are requested',
+                'validator': validate_blog_identifier,
+            },
+        },
+        'params': {
+            'offset': {
+                'required': False,
+                'description': 'Post number to start at',
+                'type': int,
+                'default': 0
+            },
+            'filter': {
+                'required': False,
+                'description': 'Specifies the post format to return, other than HTML: text – Plain text, no HTML; '
+                               'raw – As entered by the user (no post-processing); if the user writes in Markdown, '
+                               'the Markdown will be returned rather than HTML',
+                'type': str,
+                'default': None,
+                # and if you believe the internals, 'clean' is an option too ¯\_(ツ)_/¯
+                'validator': lambda x: x in [None, 'text', 'raw'],
+            },
+        },
+        'content_type': None,
+        'body': None,
+        'body_type': None,
+    },
+    # TODO: support uploading media
+    {
+        'method_name': 'create_post',
+        'description_summary': 'Create a Post (Neue Post Format)',
+        'description_long': 'This methods allows you to create posts (and reblogs) using the Neue Post Format.',
+        'http_method': 'POST',
+        'endpoint': 'blog/{blog_identifier}/posts',
+        'url_parameters': {
+            'blog_identifier': {
+                'type': str,
+                'description': 'The blog to post to',
+                'validator': validate_blog_identifier,
+            },
+        },
+        'params': {},
+        'content_type': 'application/json',
+        'body': {
+            'content': {
+                'required': True,
+                'description': 'An array of NPF content blocks to be used to make the post.',
+                'type': list,
+                'validator': lambda x: isinstance(x, list),
+            },
+            'layout': {
+                'required': False,
+                'description': 'An array of NPF layout objects to be used to lay out the post content.',
+                'type': list,
+                'default': [],
+                'validator': lambda x: isinstance(x, list),
+            },
+            'state': {
+                'required': False,
+                'description': 'The initial state of the new post, such as `"published"` or `"queued"`. '
+                               'Posts can be in the following "states": `"published"` means the post should be '
+                               'publicly published immediately, `"queue"` means the post should be added to the '
+                               'end of the blog\'s post queue, `"draft"` means the post should be saved as a draft, '
+                               '`"private"` means the post should be privately published immediately. If omitted, '
+                               'the post will get the state `"published"`',
+                'type': str,
+                'default': 'published',
+                'validator': lambda x: x in NPF_POST_STATES,
+            },
+            'publish_on': {
+                'required': False,
+                'description': 'The exact date and time (ISO 8601 format) to publish the post, if desired. This '
+                               'parameter will be ignored unless the state parameter is `"queue"`.',
+                'type': str,
+                'default': None,
+            },
+            'tags': {
+                'required': False,
+                'description': 'A comma-separated list of tags to associate with the post.',
+                'type': str,
+                'default': None,
+            },
+            'source_url': {
+                'required': False,
+                'description': 'A source attribution for the post content.',
+                'type': str,
+                'default': None,
+            },
+            'send_to_twitter': {
+                'required': False,
+                'description': 'Whether or not to share this via any connected Twitter account on post publish. '
+                               'Defaults to the blog\'s global setting.',
+                'type': bool,
+                'default': False,  # no but actually, get_user_info()[blog_identifier]['twitter_send']
+            },
+            'send_to_facebook': {
+                'required': False,
+                'description': 'Whether or not to share this via any connected Facebook account on post publish. '
+                               'Defaults to the blog\'s global setting.',
+                'type': bool,
+                'default': False,  # no but actually, get_user_info()[blog_identifier]['facebook_send']
+            },
+        },
+        'body_type': 'json',
+    },
+    {
+        'method_name': 'reblog_post',
+        'http_method': 'POST',
+        'endpoint': 'blog/{blog_identifier}/posts',
+        'url_parameters': {
+            'blog_identifier': {
+                'type': str,
+                'description': 'The blog to reblog to',
+                'validator': validate_blog_identifier,
+            },
+        },
+        'params': {},
+        'content_type': 'application/json',
+        'body': {
+            'parent_tumblelog_uuid': {
+                'required': True,
+                'description': 'The unique public identifier of the Tumblelog that\'s being reblogged from.',
+                'type': str,
+            },
+            'parent_post_id': {
+                'required': True,
+                'description': 'The unique public post ID being reblogged.',
+                'type': int,
+            },
+            'reblog_key': {
+                'required': True,
+                'description': 'The unique per-post hash validating that this is a genuine reblog action.',
+                'type': str,
+            },
+            'content': {
+                'required': True,
+                'description': 'An array of NPF content blocks to be used to make the post.',
+                'type': list,
+                'validator': lambda x: isinstance(x, list),
+            },
+            'layout': {
+                'required': False,
+                'description': 'An array of NPF layout objects to be used to lay out the post content.',
+                'type': list,
+                'default': [],
+                'validator': lambda x: isinstance(x, list),
+            },
+            'state': {
+                'required': False,
+                'description': 'The initial state of the new post, such as `"published"` or `"queued"`. '
+                               'Posts can be in the following "states": `"published"` means the post should be '
+                               'publicly published immediately, `"queue"` means the post should be added to the '
+                               'end of the blog\'s post queue, `"draft"` means the post should be saved as a draft, '
+                               '`"private"` means the post should be privately published immediately. If omitted, '
+                               'the post will get the state `"published"`',
+                'type': str,
+                'default': 'published',
+                'validator': lambda x: x in NPF_POST_STATES,
+            },
+            'publish_on': {
+                'required': False,
+                'description': 'The exact date and time (ISO 8601 format) to publish the post, if desired. This '
+                               'parameter will be ignored unless the state parameter is `"queue"`.',
+                'type': str,
+                'default': None,
+            },
+            'tags': {
+                'required': False,
+                'description': 'A comma-separated list of tags to associate with the post.',
+                'type': str,
+                'default': None,
+            },
+            'source_url': {
+                'required': False,
+                'description': 'A source attribution for the post content.',
+                'type': str,
+                'default': None,
+            },
+            'send_to_twitter': {
+                'required': False,
+                'description': 'Whether or not to share this via any connected Twitter account on post publish. '
+                               'Defaults to the blog\'s global setting.',
+                'type': bool,
+                'default': False,  # no but actually, get_user_info()[blog_identifier]['twitter_send']
+            },
+            'send_to_facebook': {
+                'required': False,
+                'description': 'Whether or not to share this via any connected Facebook account on post publish. '
+                               'Defaults to the blog\'s global setting.',
+                'type': bool,
+                'default': False,  # no but actually, get_user_info()[blog_identifier]['facebook_send']
+            },
+            'hide_trail': {
+                'required': False,
+                'description': 'Whether or not to hide the reblog trail with this new post. Defaults to false.',
+                'type': bool,
+                'default': False,
+            },
+        },
+        'body_type': 'json',
+    },
     {
         'method_name': 'fetch_post',
         'description_summary': 'Fetch an individual post',
@@ -542,71 +659,105 @@ _ENDPOINTS = [
     # #     'body': {},  # TODO: implement from create_post/reblog_post
     # #     'body_type': 'json'
     # # },
-    # {
-    #     'method_name': 'delete_post',
-    #     'http_method': 'POST',
-    #     'endpoint': 'blog/{blog_identifier}/post/delete',
-    #     'url_parameters': ['blog_identifier'],
-    #     'params': {},
-    #     'content_type': 'application/x-www-form-urlencoded',
-    #     'body': {
-    #         'id': {
-    #             'required': True,
-    #         },
-    #     },
-    #     'body_type': 'kv',
-    # },
-    # {
-    #     'method_name': 'get_user_info',
-    #     'http_method': 'GET',
-    #     'endpoint': 'user/info',
-    #     'url_parameters': [],
-    #     'params': {
-    #         # None in the public API, internal mentions keys `force_oauth=false` and `private_blogs=true`
-    #     },
-    #     'content_type': None,
-    #     'body': None,
-    #     'body_type': None,
-    # },
-    # {
-    #     'method_name': 'get_user_dashboard',
-    #     'http_method': 'GET',
-    #     'endpoint': 'user/dashboard',
-    #     'params': {
-    #         'limit': {
-    #             'required': False,
-    #             'default': 20,
-    #             'validator': lambda x: 1 <= x <= 20,
-    #         },
-    #         'offset': {
-    #             'required': False,
-    #             'default': 0,
-    #             'validator': lambda x: x < 1000,
-    #         },
-    #         'type': {
-    #             'required': False,
-    #             'default': None,
-    #             'validator': lambda x: x in POST_TYPES,
-    #         },
-    #         'since_id': {
-    #             'required': False,
-    #             'default': 0,
-    #         },
-    #         'reblog_info': {
-    #             'required': False,
-    #             'default': False,
-    #             'validator': lambda x: x in [True, False],
-    #         },
-    #         'notes_info': {
-    #             'required': False,
-    #             'default': False,
-    #             'validator': lambda x: x in [True, False],
-    #         },
-    #     },
-    #     'content_type': None,
-    #     'body': None,
-    #     'body_type': None,
-    # },
+    {
+        'method_name': 'delete_post',
+        'description_summary': 'Delete a Post',
+        'description_long': None,
+        'http_method': 'POST',
+        'endpoint': 'blog/{blog_identifier}/post/delete',
+        'url_parameters': {
+            'blog_identifier': {
+                'type': str,
+                'description': 'The blog whose post has to be deleted',
+                'validator': validate_blog_identifier
+            },
+        },
+        'params': {},
+        'content_type': 'application/x-www-form-urlencoded',
+        'body': {
+            'id': {
+                'required': True,
+                'description': 'The ID of the post to delete',
+                'type': int,
+            },
+        },
+        'body_type': 'kv',
+    },
+    {
+        'method_name': 'get_user_info',
+        'description_summary': 'Get a User\'s Information',
+        'description_long': 'Use this method to retrieve the user\'s account information that matches the OAuth '
+                            'credentials submitted with the request.',
+        'http_method': 'GET',
+        'endpoint': 'user/info',
+        'url_parameters': {},
+        'params': {
+            # None in the public API, internal mentions keys `force_oauth=false` and `private_blogs=true`
+        },
+        'content_type': None,
+        'body': None,
+        'body_type': None,
+    },
+    {
+        'method_name': 'get_user_dashboard',
+        'description_summary': 'Retrieve a User\'s Dashboard',
+        'description_long': 'Use this method to retrieve the dashboard that matches the OAuth credentials '
+                            'submitted with the request.',
+        'http_method': 'GET',
+        'endpoint': 'user/dashboard',
+        'url_parameters': {},
+        'params': {
+            'limit': {
+                'required': False,
+                'description': 'The number of results to return: 1–20, inclusive',
+                'type': int,
+                'default': 20,
+                'validator': lambda x: 1 <= x <= 20,
+            },
+            'offset': {
+                'required': False,
+                'description': 'Post number to start at',
+                'type': int,
+                'default': 0,
+                'validator': lambda x: x < 1000,
+            },
+            'type': {
+                'required': False,
+                'description': 'The type of post to return. Specify one of the following: text, photo, quote, '
+                               'link, chat, audio, video, answer',
+                'type': str,
+                'default': None,
+                'validator': lambda x: x in POST_TYPES,
+            },
+            'since_id': {
+                'required': False,
+                'description': 'Return posts that have appeared after this ID; Use this parameter to page through '
+                               'the results: first get a set of posts, and then get posts since the last ID of the '
+                               'previous set.',
+                'type': int,
+                'default': 0,
+            },
+            'reblog_info': {
+                'required': False,
+                'description': 'Indicates whether to return reblog information (specify true or false). Returns the '
+                               'various `reblogged_` fields.',
+                'type': bool,
+                'default': False,
+                'validator': lambda x: x in [True, False],
+            },
+            'notes_info': {
+                'required': False,
+                'description': 'Indicates whether to return notes information (specify true or false). Returns '
+                               'note count and note metadata.',
+                'type': bool,
+                'default': False,
+                'validator': lambda x: x in [True, False],
+            },
+        },
+        'content_type': None,
+        'body': None,
+        'body_type': None,
+    },
     # {
     #     'method_name': 'get_user_likes',
     #     'http_method': 'GET',
