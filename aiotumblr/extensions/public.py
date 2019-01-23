@@ -340,7 +340,7 @@ _ENDPOINTS = [
     },
     {
         'method_name': 'get_blog_queue',
-        'description_short': 'Retrieve Queued Posts',
+        'description_summary': 'Retrieve Queued Posts',
         'description_long': None,
         'http_method': 'GET',
         'endpoint': 'blog/{blog_identifier}/posts/queue',
@@ -533,6 +533,8 @@ _ENDPOINTS = [
     },
     {
         'method_name': 'reblog_post',
+        'description_summary': 'Reblog a post',
+        'description_long': None,
         'http_method': 'POST',
         'endpoint': 'blog/{blog_identifier}/posts',
         'url_parameters': {
@@ -649,16 +651,192 @@ _ENDPOINTS = [
         'body': None,
         'body_type': None,
     },
-    # # {
-    # #     'method_name': 'edit_post',
-    # #     'http_method': 'PUT',
-    # #     'endpoint': 'blog/{blog_identifier}/posts/{post_id}',
-    # #     'url_parameters': ['blog_identifier', 'post_id'],
-    # #     'params': {},
-    # #     'content_type': 'application/json',
-    # #     'body': {},  # TODO: implement from create_post/reblog_post
-    # #     'body_type': 'json'
-    # # },
+    {
+        'method_name': 'edit_post',
+        'description_summary': 'Editing a Post (in NPF format)',
+        'description_long': 'This route allows you to edit posts using the Neue Post Format. Note that you can only '
+                            'edit posts in NPF if they were originally created in NPF, or are legacy text posts.',
+        'http_method': 'PUT',
+        'endpoint': 'blog/{blog_identifier}/posts/{post_id}',
+        'url_parameters': {
+            'blog_identifier': {
+                'type': str,
+                'description': 'The blog whose post is requested for editing',
+                'validator': validate_blog_identifier
+            },
+            'post_id': {
+                'type': int,
+                'description': 'The ID of the post to edit'
+            },
+        },
+        'params': {},
+        'content_type': 'application/json',
+        'body': {
+            'content': {
+                'required': True,
+                'description': 'An array of NPF content blocks to be used to make the post.',
+                'type': list,
+                'validator': lambda x: isinstance(x, list),
+            },
+            'layout': {
+                'required': False,
+                'description': 'An array of NPF layout objects to be used to lay out the post content.',
+                'type': list,
+                'default': [],
+                'validator': lambda x: isinstance(x, list),
+            },
+            'state': {
+                'required': False,
+                'description': 'The initial state of the new post, such as `"published"` or `"queued"`. '
+                               'Posts can be in the following "states": `"published"` means the post should be '
+                               'publicly published immediately, `"queue"` means the post should be added to the '
+                               'end of the blog\'s post queue, `"draft"` means the post should be saved as a draft, '
+                               '`"private"` means the post should be privately published immediately. If omitted, '
+                               'the post will get the state `"published"`',
+                'type': str,
+                'default': 'published',
+                'validator': lambda x: x in NPF_POST_STATES,
+            },
+            'publish_on': {
+                'required': False,
+                'description': 'The exact date and time (ISO 8601 format) to publish the post, if desired. This '
+                               'parameter will be ignored unless the state parameter is `"queue"`.',
+                'type': str,
+                'default': None,
+            },
+            'tags': {
+                'required': False,
+                'description': 'A comma-separated list of tags to associate with the post.',
+                'type': str,
+                'default': None,
+            },
+            'source_url': {
+                'required': False,
+                'description': 'A source attribution for the post content.',
+                'type': str,
+                'default': None,
+            },
+            'send_to_twitter': {
+                'required': False,
+                'description': 'Whether or not to share this via any connected Twitter account on post publish. '
+                               'Defaults to the blog\'s global setting.',
+                'type': bool,
+                'default': False,  # no but actually, get_user_info()[blog_identifier]['twitter_send']
+            },
+            'send_to_facebook': {
+                'required': False,
+                'description': 'Whether or not to share this via any connected Facebook account on post publish. '
+                               'Defaults to the blog\'s global setting.',
+                'type': bool,
+                'default': False,  # no but actually, get_user_info()[blog_identifier]['facebook_send']
+            },
+        },
+        'body_type': 'json'
+    },
+    {
+        'method_name': 'edit_reblog',
+        'description_summary': 'Editing a Reblogged Post (in NPF format)',
+        'description_long': 'This route allows you to edit reblogs using the Neue Post Format. Note that you can only '
+                            'edit posts in NPF if they were originally created in NPF, or are legacy text posts.',
+
+        'http_method': 'PUT',
+        'endpoint': 'blog/{blog_identifier}/posts/{post_id}',
+        'url_parameters': {
+            'blog_identifier': {
+                'type': str,
+                'description': 'The blog whose post is requested for editing',
+                'validator': validate_blog_identifier
+            },
+            'post_id': {
+                'type': int,
+                'description': 'The ID of the post to edit'
+            },
+        },
+        'params': {},
+        'content_type': 'application/json',
+        'body': {
+            'parent_tumblelog_uuid': {
+                'required': True,
+                'description': 'The unique public identifier of the Tumblelog that\'s being reblogged from.',
+                'type': str,
+            },
+            'parent_post_id': {
+                'required': True,
+                'description': 'The unique public post ID being reblogged.',
+                'type': int,
+            },
+            'reblog_key': {
+                'required': True,
+                'description': 'The unique per-post hash validating that this is a genuine reblog action.',
+                'type': str,
+            },
+            'content': {
+                'required': True,
+                'description': 'An array of NPF content blocks to be used to make the post.',
+                'type': list,
+                'validator': lambda x: isinstance(x, list),
+            },
+            'layout': {
+                'required': False,
+                'description': 'An array of NPF layout objects to be used to lay out the post content.',
+                'type': list,
+                'default': [],
+                'validator': lambda x: isinstance(x, list),
+            },
+            'state': {
+                'required': False,
+                'description': 'The initial state of the new post, such as `"published"` or `"queued"`. '
+                               'Posts can be in the following "states": `"published"` means the post should be '
+                               'publicly published immediately, `"queue"` means the post should be added to the '
+                               'end of the blog\'s post queue, `"draft"` means the post should be saved as a draft, '
+                               '`"private"` means the post should be privately published immediately. If omitted, '
+                               'the post will get the state `"published"`',
+                'type': str,
+                'default': 'published',
+                'validator': lambda x: x in NPF_POST_STATES,
+            },
+            'publish_on': {
+                'required': False,
+                'description': 'The exact date and time (ISO 8601 format) to publish the post, if desired. This '
+                               'parameter will be ignored unless the state parameter is `"queue"`.',
+                'type': str,
+                'default': None,
+            },
+            'tags': {
+                'required': False,
+                'description': 'A comma-separated list of tags to associate with the post.',
+                'type': str,
+                'default': None,
+            },
+            'source_url': {
+                'required': False,
+                'description': 'A source attribution for the post content.',
+                'type': str,
+                'default': None,
+            },
+            'send_to_twitter': {
+                'required': False,
+                'description': 'Whether or not to share this via any connected Twitter account on post publish. '
+                               'Defaults to the blog\'s global setting.',
+                'type': bool,
+                'default': False,  # no but actually, get_user_info()[blog_identifier]['twitter_send']
+            },
+            'send_to_facebook': {
+                'required': False,
+                'description': 'Whether or not to share this via any connected Facebook account on post publish. '
+                               'Defaults to the blog\'s global setting.',
+                'type': bool,
+                'default': False,  # no but actually, get_user_info()[blog_identifier]['facebook_send']
+            },
+            'hide_trail': {
+                'required': False,
+                'description': 'Whether or not to hide the reblog trail with this new post. Defaults to false.',
+                'type': bool,
+                'default': False,
+            },
+        },
+        'body_type': 'json'
+    },
     {
         'method_name': 'delete_post',
         'description_summary': 'Delete a Post',
@@ -758,117 +936,161 @@ _ENDPOINTS = [
         'body': None,
         'body_type': None,
     },
-    # {
-    #     'method_name': 'get_user_likes',
-    #     'http_method': 'GET',
-    #     'endpoint': 'user/likes',
-    #     'url_parameters': [],
-    #     'params': {
-    #         'limit': {
-    #             'required': False,
-    #             'default': 20,
-    #             'validator': lambda x: 1 <= x <= 20,
-    #         },
-    #         'offset': {
-    #             'required': False,
-    #             'default': 0,
-    #             'validator': lambda x: x < 1000,
-    #         },
-    #         'before': {
-    #             'required': False,
-    #             'default': None,
-    #         },
-    #         'after': {
-    #             'required': False,
-    #             'default': None,
-    #         },
-    #     },
-    #     'content_type': None,
-    #     'body': None,
-    #     'body_type': None,
-    # },
-    # {
-    #     'method_name': 'get_user_following',
-    #     'http_method': 'GET',
-    #     'endpoint': 'user/following',
-    #     'url_parameters': [],
-    #     'params': {
-    #         'limit': {
-    #             'required': False,
-    #             'default': 20,
-    #             'validator': lambda x: 1 <= x <= 20,
-    #         },
-    #         'offset': {
-    #             'required': False,
-    #             'default': 0,
-    #         }
-    #     },
-    #     'content_type': None,
-    #     'body': None,
-    #     'body_type': None,
-    # },
-    # {
-    #     'method_name': 'follow_blog',
-    #     'http_method': 'POST',
-    #     'endpoint': 'user/follow',
-    #     'url_parameters': [],
-    #     'params': {},
-    #     'content_type': 'application/x-www-form-urlencoded',
-    #     'body': {
-    #         'url': {
-    #             'required': True,
-    #         },
-    #     },
-    #     'body_type': 'kv',
-    # },
-    # {
-    #     'method_name': 'unfollow_blog',
-    #     'http_method': 'POST',
-    #     'endpoint': 'user/unfollow',
-    #     'url_parameters': [],
-    #     'params': {},
-    #     'content_type': 'application/x-www-form-urlencoded',
-    #     'body': {
-    #         'url': {
-    #             'required': True,
-    #         },
-    #     },
-    #     'body_type': 'kv',
-    # },
-    # {
-    #     'method_name': 'like_post',
-    #     'http_method': 'POST',
-    #     'endpoint': 'user/like',
-    #     'url_parameters': [],
-    #     'params': {},
-    #     'content_type': 'application/x-www-form-urlencoded',
-    #     'body': {
-    #         'id': {
-    #             'required': True,
-    #         },
-    #         'reblog_key': {
-    #             'required': True
-    #         },
-    #     },
-    #     'body_type': 'kv',
-    # },
-    # {
-    #     'method_name': 'unlike_post',
-    #     'http_method': 'POST',
-    #     'endpoint': 'user/unlike',
-    #     'url_parameters': [],
-    #     'params': {},
-    #     'content_type': 'application/x-www-form-urlencoded',
-    #     'body': {
-    #         'id': {
-    #             'required': True,
-    #         },
-    #         'reblog_key': {
-    #             'required': True
-    #         },
-    #     },
-    #     'body_type': 'kv',
-    # },
+    {
+        'method_name': 'get_user_likes',
+        'description_summary': 'Retrieve a User\'s Likes',
+        'description_long': 'Use this method to retrieve the liked posts that match the OAuth credentials submitted '
+                            'with the request. You can only provide either before, after, or offset. If you provide '
+                            'more than one of these options together you will get an error. You can still use limit '
+                            'with any of those three options to limit your result set. When using the offset parameter '
+                            'the maximum limit on the offset is 1000. If you would like to get more results than that '
+                            'use either before or after.',
+        'http_method': 'GET',
+        'endpoint': 'user/likes',
+        'url_parameters': {},
+        'params': {
+            'limit': {
+                'required': False,
+                'description': 'The number of results to return: 1–20, inclusive',
+                'type': int,
+                'default': 20,
+                'validator': lambda x: 1 <= x <= 20,
+            },
+            'offset': {
+                'required': False,
+                'description': 'Liked post number to start at',
+                'type': int,
+                'default': 0,
+                'validator': lambda x: x < 1000,
+            },
+            'before': {
+                'required': False,
+                'description': 'Retrieve posts liked before the specified timestamp',
+                'type': int,
+                'default': None,
+            },
+            'after': {
+                'required': False,
+                'description': 'Retrieve posts liked after the specified timestamp',
+                'type': int,
+                'default': None,
+            },
+        },
+        'content_type': None,
+        'body': None,
+        'body_type': None,
+    },
+    {
+        'method_name': 'get_user_following',
+        'description_summary': 'Retrieve the Blogs a User Is Following',
+        'description_long': 'Use this method to retrieve the blogs followed by the user whose OAuth credentials are '
+                            'submitted with the request.',
+        'http_method': 'GET',
+        'endpoint': 'user/following',
+        'url_parameters': {},
+        'params': {
+            'limit': {
+                'required': False,
+                'description': 'The number of results to return: 1–20, inclusive',
+                'type': int,
+                'default': 20,
+                'validator': lambda x: 1 <= x <= 20,
+            },
+            'offset': {
+                'required': False,
+                'description': 'Result number to start at',
+                'type': int,
+                'default': 0,
+            }
+        },
+        'content_type': None,
+        'body': None,
+        'body_type': None,
+    },
+    {
+        'method_name': 'follow_blog',
+        'description_summary': 'Follow a blog',
+        'description_long': None,
+        'http_method': 'POST',
+        'endpoint': 'user/follow',
+        'url_parameters': {},
+        'params': {},
+        'content_type': 'application/x-www-form-urlencoded',
+        'body': {
+            'url': {
+                'required': True,
+                'description': 'The URL of the blog to follow',
+                'type': str,
+                'validator': lambda x: x.endswith('.tumblr.com'),
+            },
+        },
+        'body_type': 'kv',
+    },
+    {
+        'method_name': 'unfollow_blog',
+        'description_summary': 'Unfollow a blog',
+        'description_long': None,
+        'http_method': 'POST',
+        'endpoint': 'user/unfollow',
+        'url_parameters': {},
+        'params': {},
+        'content_type': 'application/x-www-form-urlencoded',
+        'body': {
+            'url': {
+                'required': True,
+                'description': 'The URL of the blog to unfollow',
+                'type': str,
+                'validator': lambda x: x.endswith('.tumblr.com'),
+            },
+        },
+        'body_type': 'kv',
+    },
+    {
+        'method_name': 'like_post',
+        'description_summary': 'Like a Post',
+        'description_long': None,
+        'http_method': 'POST',
+        'endpoint': 'user/like',
+        'url_parameters': {},
+        'params': {},
+        'content_type': 'application/x-www-form-urlencoded',
+        'body': {
+            'id': {
+                'required': True,
+                'description': 'The ID of the post to like',
+                'type': int,
+            },
+            'reblog_key': {
+                'required': True,
+                'description': 'The reblog key for the post id',
+                'type': str,
+            },
+        },
+        'body_type': 'kv',
+    },
+    {
+        'method_name': 'unlike_post',
+        'description_summary': 'Unlike a Post',
+        'description_long': None,
+        'http_method': 'POST',
+        'endpoint': 'user/unlike',
+        'url_parameters': {},
+        'params': {},
+        'content_type': 'application/x-www-form-urlencoded',
+        'body': {
+            'id': {
+                'required': True,
+                'description': 'The ID of the post to unlike',
+                'type': int,
+            },
+            'reblog_key': {
+                'required': True,
+                'description': 'The reblog key for the post id',
+                'type': str,
+            },
+        },
+        'body_type': 'kv',
+    },
 ]
 
 
