@@ -12,10 +12,18 @@ def format_docstring_for_sphinx(docstring: str, indent: int = 3) -> str:
     return '\n'.join(lines_new)
 
 
-def format_parameter(param):
+def format_parameter_value(param):
     if isinstance(param, bool):
         return str(param).lower()
     return param
+
+
+def sphinx_format_parameter(param):
+    """Fix for Sphinx #519"""
+    if param.endswith('_'):
+        return f'{param[:-1]}\\_'
+    else:
+        return param
 
 
 def parse_method_info(method_info: Dict[str, Any]) -> Tuple[Dict[str, Union[list, Any]], Dict[str, Union[list, Any]]]:
@@ -54,35 +62,38 @@ def parse_method_info(method_info: Dict[str, Any]) -> Tuple[Dict[str, Union[list
 
 
 def generate_docstring(params, body, method_info) -> str:
-    ds_url_params = '\n'.join(f""":param {key}: {url_param['description']}
-:type {key}: {url_param['type'].__name__}""" for key, url_param in method_info['url_parameters'].items())
+    ds_url_params = '\n'.join(
+        f""":param {sphinx_format_parameter(key)}: {url_param['description']}
+:type {sphinx_format_parameter(key)}: {url_param['type'].__name__}"""
+        for key, url_param in method_info['url_parameters'].items()
+    )
 
     required_params = []
     for key in params['required']:
         req_param = params['data'][key]
-        required_params.append(f""":param {key}: {req_param['description']}
-:type {key}: {req_param['type'].__name__}""")
+        required_params.append(f""":param {sphinx_format_parameter(key)}: {req_param['description']}
+:type {sphinx_format_parameter(key)}: {req_param['type'].__name__}""")
     ds_required_params = '\n'.join(required_params)
 
     optional_params = []
     for key in params['optional']:
         opt_param = params['data'][key]
-        optional_params.append(f""":param {key}: {opt_param['description']}
-:type {key}: {opt_param['type'].__name__} or None""")
+        optional_params.append(f""":param {sphinx_format_parameter(key)}: {opt_param['description']}
+:type {sphinx_format_parameter(key)}: {opt_param['type'].__name__} or None""")
     ds_optional_params = '\n'.join(optional_params)
 
     required_body_args = []
     for key in body['required']:
         req_body_arg = body['data'][key]
-        required_body_args.append(f""":param {key}: {req_body_arg['description']}
-:type {key}: {req_body_arg['type'].__name__}""")
+        required_body_args.append(f""":param {sphinx_format_parameter(key)}: {req_body_arg['description']}
+:type {sphinx_format_parameter(key)}: {req_body_arg['type'].__name__}""")
     ds_required_body_args = '\n'.join(required_body_args)
 
     optional_body_args = []
     for key in body['optional']:
         opt_body_arg = body['data'][key]
-        optional_body_args.append(f""":param {key}: {opt_body_arg['description']}
-:type {key}: {opt_body_arg['type'].__name__} or None""")
+        optional_body_args.append(f""":param {sphinx_format_parameter(key)}: {opt_body_arg['description']}
+:type {sphinx_format_parameter(key)}: {opt_body_arg['type'].__name__} or None""")
     ds_optional_body_args = '\n'.join(optional_body_args)
 
     ds = f"""{method_info['description_summary']}\n"""
@@ -175,7 +186,11 @@ def create_method(client, params, body, method_info):
                     # TODO: less generic error messages by abstracting this to the endpoint data structure
                     raise ValueError(f'Supplied argument {param!r} failed to validate')
 
-            params_signature.append((param, format_parameter(item)))
+            if '_internal_name' in params['data'][param]:
+                params_signature.append((params['data'][param]['_internal_name'], format_parameter_value(item)))
+            else:
+                params_signature.append((param, format_parameter_value(item)))
+
         for param in params['optional']:
             if param in kwargs and kwargs[param] is not None:
                 if 'validator' in params['data'][param]:
@@ -184,7 +199,11 @@ def create_method(client, params, body, method_info):
                         # TODO: less generic error messages by abstracting this to the endpoint data structure
                         raise ValueError(f'Supplied argument {param!r} failed to validate')
 
-                params_signature.append((param, format_parameter(kwargs[param])))
+                if '_internal_name' in params['data'][param]:
+                    params_signature.append(
+                        (params['data'][param]['_internal_name'], format_parameter_value(kwargs[param])))
+                else:
+                    params_signature.append((param, format_parameter_value(kwargs[param])))
 
         # Verify body
         # TODO: DRY
@@ -206,8 +225,12 @@ def create_method(client, params, body, method_info):
                     # TODO: less generic error messages by abstracting this to the endpoint data structure
                     raise ValueError(f'Supplied argument {key!r} failed to validate')
 
-            body_signature[key] = item if method_info['body_type'] == 'json' else \
-                format_parameter(item)
+            if '_internal_name' in body['data'][key]:
+                body_signature[body['data'][key]['_internal_name']] = item if method_info['body_type'] == 'json' else \
+                    format_parameter_value(item)
+            else:
+                body_signature[key] = item if method_info['body_type'] == 'json' else \
+                    format_parameter_value(item)
 
         for key in body['optional']:
             if key in kwargs and kwargs[key] is not None:
@@ -217,8 +240,13 @@ def create_method(client, params, body, method_info):
                         # TODO: less generic error messages by abstracting this to the endpoint data structure
                         raise ValueError(f'Supplied argument {key!r} failed to validate')
 
-                body_signature[key] = kwargs[key] if method_info['body_type'] == 'json' else \
-                    format_parameter(kwargs[key])
+                if '_internal_name' in body['data'][key]:
+                    body_signature[body['data'][key]['_internal_name']] = kwargs[key] if \
+                        method_info['body_type'] == 'json' else \
+                        format_parameter_value(kwargs[key])
+                else:
+                    body_signature[key] = kwargs[key] if method_info['body_type'] == 'json' else \
+                        format_parameter_value(kwargs[key])
 
         if method_info['http_method'] in ['POST', 'PUT', 'PATCH']:
             # Have a body

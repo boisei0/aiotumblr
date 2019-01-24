@@ -1,6 +1,6 @@
 # encoding=utf-8
 # Stubs for the aiotumblr.TumblrClient core class, with the idea that the public API is already hooked on it
-from typing import Dict, List, Tuple, Optional, Any, Union
+from typing import Dict, List, Tuple, Optional, Any, Union, Type
 
 from aiohttp import ClientResponse, ClientSession
 from oauthlib.oauth1 import Client
@@ -32,10 +32,10 @@ class TumblrClient:
                              headers: Optional[Dict[str, str]] = None, **kwargs) -> ClientResponse: ...
 
     @classmethod
-    def register_extension(cls, extension: Extension): ...
+    def register_extension(cls, extension: Type[Extension]): ...
 
     @classmethod
-    def unregister_extension(cls, extension: Extension): ...
+    def unregister_extension(cls, extension: Type[Extension]): ...
 
     async def close_connection(self) -> None: ...
 

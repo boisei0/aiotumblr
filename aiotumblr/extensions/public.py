@@ -233,7 +233,8 @@ _ENDPOINTS = [
                 'default': False,
                 'validator': lambda x: x in [True, False],
             },
-            'filter': {
+            'filter_': {
+                '_internal_name': 'filter',
                 'required': False,
                 'description': 'Specifies the post format to return, other than HTML: `text` – Plain text, no HTML; '
                                '`raw` – As entered by the user (no post-processing); if the user writes in Markdown, '
@@ -268,7 +269,8 @@ _ENDPOINTS = [
             },
         },
         'params': {
-            'type': {
+            'type_': {
+                '_internal_name': 'type',
                 'required': True,
                 'description': 'Type of the post',
                 'type': str,
@@ -317,7 +319,8 @@ _ENDPOINTS = [
                 'default': False,
                 'validator': lambda x: x in [True, False],
             },
-            'filter': {
+            'filter_': {
+                '_internal_name': 'filter',
                 'required': False,
                 'description': 'Specifies the post format to return, other than HTML: `text` – Plain text, no HTML; '
                                '`raw` – As entered by the user (no post-processing); if the user writes in Markdown, '
@@ -366,7 +369,8 @@ _ENDPOINTS = [
                 'default': 0,
                 # Validator? Max limit of 1000? No clue because look, lack of documentation
             },
-            'filter': {
+            'filter_': {
+                '_internal_name': 'filter',
                 'required': False,
                 'description': 'Specifies the post format to return, other than HTML: text – Plain text, no HTML; '
                                'raw – As entered by the user (no post-processing); if the user writes in Markdown, '
@@ -403,7 +407,8 @@ _ENDPOINTS = [
                 'type': int,
                 'default': 0,
             },
-            'filter': {
+            'filter_': {
+                '_internal_name': 'filter',
                 'required': False,
                 'description': 'Specifies the post format to return, other than HTML: text – Plain text, no HTML; '
                                'raw – As entered by the user (no post-processing); if the user writes in Markdown, '
@@ -438,7 +443,8 @@ _ENDPOINTS = [
                 'type': int,
                 'default': 0
             },
-            'filter': {
+            'filter_': {
+                '_internal_name': 'filter',
                 'required': False,
                 'description': 'Specifies the post format to return, other than HTML: text – Plain text, no HTML; '
                                'raw – As entered by the user (no post-processing); if the user writes in Markdown, '
@@ -899,7 +905,8 @@ _ENDPOINTS = [
                 'default': 0,
                 'validator': lambda x: x < 1000,
             },
-            'type': {
+            'type_': {
+                '_internal_name': 'type',
                 'required': False,
                 'description': 'The type of post to return. Specify one of the following: text, photo, quote, '
                                'link, chat, audio, video, answer',
@@ -1110,11 +1117,18 @@ class PublicAPI(Extension):
 
     @classmethod
     def generate_docs(cls):
-        doc = f"""{len(cls.prefix) * '='}====
-{cls.prefix} API
-{len(cls.prefix) * '='}====\n\n"""
+        _title = 'Public API'
+        doc = f"""{len(_title) * '='}
+{_title}
+{len(_title) * '='}\n\n"""
+        from aiotumblr import TumblrClient
+        from asyncio import get_event_loop
+        loop = get_event_loop()
+        t = TumblrClient('placeholder', 'placeholder')
+        t.register_extension(cls)
         for method_info in _ENDPOINTS:
-            doc += cls._generate_doc(method_info)
+            doc += cls._generate_doc_from_method(getattr(t, method_info['method_name']))
             doc += '\n'
 
+        loop.run_until_complete(t.close_connection())
         return doc

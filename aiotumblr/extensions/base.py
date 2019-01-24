@@ -1,4 +1,7 @@
 # encoding=utf-8
+from typing import Callable
+from forge import repr_callable
+
 from aiotumblr.extensions.utils import parse_method_info, generate_docstring, format_docstring_for_sphinx
 
 __all__ = ['POST_TYPES', 'NPF_POST_STATES', 'Extension']
@@ -8,6 +11,7 @@ __all__ = ['POST_TYPES', 'NPF_POST_STATES', 'Extension']
 #     'method_name': '',
 #     'description_summary': '',
 #     'description_long': None,
+#     'http_method': 'POST'
 #     'endpoint': '',  # str ready to be used with f.format
 #     'url_parameters': {  # dict with key/value pairs where each key is a variable in `endpoint`
 #         'key': {
@@ -79,4 +83,10 @@ class Extension(object):
         method_doc = generate_docstring(params, body, method_info)
         doc = f".. py:method:: {method_info['method_name']}(...)\n\n"  # FIXME
         doc += format_docstring_for_sphinx(method_doc, indent=3)
+        return doc
+
+    @classmethod
+    def _generate_doc_from_method(cls, method: Callable):
+        doc = f".. py:method:: {repr_callable(method)}\n\n"
+        doc += format_docstring_for_sphinx(method.__doc__, indent=3)
         return doc

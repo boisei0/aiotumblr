@@ -1,8 +1,8 @@
 ==========
-public API
+Public API
 ==========
 
-.. py:method:: get_blog_info(...)
+.. py:method:: get_blog_info(blog_identifier: str)
 
    Retrieve blog info
 
@@ -15,7 +15,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_avatar(...)
+.. py:method:: get_blog_avatar(blog_identifier: str)
 
    Retrieve a Blog Avatar
 
@@ -28,7 +28,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_avatar_with_size(...)
+.. py:method:: get_blog_avatar_with_size(blog_identifier: str, size: int)
 
    Retrieve a Blog Avatar with a specific size
 
@@ -41,7 +41,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_likes(...)
+.. py:method:: get_blog_likes(blog_identifier: str, *, limit: int = None, offset: int = None, before: int = None, after: int = None)
 
    Retrieve Blog's Likes
 
@@ -66,7 +66,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_following(...)
+.. py:method:: get_blog_following(blog_identifier: str, *, limit: int = None, offset: int = None)
 
    Retrieve Blog's following
 
@@ -83,7 +83,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_followers(...)
+.. py:method:: get_blog_followers(blog_identifier: str, *, limit: int = None, offset: int = None)
 
    Retrieve a Blog's Followers
 
@@ -98,7 +98,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_posts(...)
+.. py:method:: get_blog_posts(blog_identifier: str, *, id: int = None, tag: str = None, limit: int = None, offset: int = None, reblog_info: bool = None, notes_info: bool = None, filter_: str = None, before: int = None)
 
    Retrieve Published Posts
 
@@ -116,8 +116,8 @@ public API
    :type reblog_info: bool or None
    :param notes_info: Indicates whether to return notes information (specify true or false). Returns note count and note metadata.
    :type notes_info: bool or None
-   :param filter: Specifies the post format to return, other than HTML: `text` – Plain text, no HTML; `raw` – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
-   :type filter: str or None
+   :param filter\_: Specifies the post format to return, other than HTML: `text` – Plain text, no HTML; `raw` – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
+   :type filter\_: str or None
    :param before: Returns posts published earlier than a specified Unix timestamp, in seconds.
    :type before: int or None
    :return: API response for get_blog_posts
@@ -125,14 +125,14 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_posts_with_type(...)
+.. py:method:: get_blog_posts_with_type(blog_identifier: str, type_: str, *, id: int = None, tag: str = None, limit: int = None, offset: int = None, reblog_info: bool = None, notes_info: bool = None, filter_: str = None, before: int = None)
 
    Retrieve Published Posts of a specific type
 
    :param blog_identifier: The blog whose posts are requested
    :type blog_identifier: str
-   :param type: Type of the post
-   :type type: str
+   :param type\_: Type of the post
+   :type type\_: str
    :param id: A specific post ID. Returns the single post specified or (if not found) a 404 error.
    :type id: int or None
    :param tag: Limits the response to posts with the specified tag
@@ -145,8 +145,8 @@ public API
    :type reblog_info: bool or None
    :param notes_info: Indicates whether to return notes information (specify true or false). Returns note count and note metadata.
    :type notes_info: bool or None
-   :param filter: Specifies the post format to return, other than HTML: `text` – Plain text, no HTML; `raw` – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
-   :type filter: str or None
+   :param filter\_: Specifies the post format to return, other than HTML: `text` – Plain text, no HTML; `raw` – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
+   :type filter\_: str or None
    :param before: Returns posts published earlier than a specified Unix timestamp, in seconds.
    :type before: int or None
    :return: API response for get_blog_posts_with_type
@@ -154,7 +154,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_queue(...)
+.. py:method:: get_blog_queue(blog_identifier: str, *, limit: int = None, offset: int = None, filter_: str = None)
 
    Retrieve Queued Posts
 
@@ -164,14 +164,14 @@ public API
    :type limit: int or None
    :param offset: Post number to start at
    :type offset: int or None
-   :param filter: Specifies the post format to return, other than HTML: text – Plain text, no HTML; raw – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
-   :type filter: str or None
+   :param filter\_: Specifies the post format to return, other than HTML: text – Plain text, no HTML; raw – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
+   :type filter\_: str or None
    :return: API response for get_blog_queue
    :rtype: `aiohttp.ClientResponse`
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_drafts(...)
+.. py:method:: get_blog_drafts(blog_identifier: str, *, before_id: int = None, filter_: str = None)
 
    Retrieve Draft Posts
 
@@ -179,14 +179,14 @@ public API
    :type blog_identifier: str
    :param before_id: Return posts that have appeared before this ID; Use this parameter to page through the results: first get a set of posts, and then get posts since the last ID of the previous set.
    :type before_id: int or None
-   :param filter: Specifies the post format to return, other than HTML: text – Plain text, no HTML; raw – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
-   :type filter: str or None
+   :param filter\_: Specifies the post format to return, other than HTML: text – Plain text, no HTML; raw – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
+   :type filter\_: str or None
    :return: API response for get_blog_drafts
    :rtype: `aiohttp.ClientResponse`
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_blog_submissions(...)
+.. py:method:: get_blog_submissions(blog_identifier: str, *, offset: int = None, filter_: str = None)
 
    Retrieve Submission Posts
 
@@ -194,14 +194,14 @@ public API
    :type blog_identifier: str
    :param offset: Post number to start at
    :type offset: int or None
-   :param filter: Specifies the post format to return, other than HTML: text – Plain text, no HTML; raw – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
-   :type filter: str or None
+   :param filter\_: Specifies the post format to return, other than HTML: text – Plain text, no HTML; raw – As entered by the user (no post-processing); if the user writes in Markdown, the Markdown will be returned rather than HTML
+   :type filter\_: str or None
    :return: API response for get_blog_submissions
    :rtype: `aiohttp.ClientResponse`
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: create_post(...)
+.. py:method:: create_post(blog_identifier: str, content: list, *, layout: list = None, state: str = None, publish_on: str = None, tags: str = None, source_url: str = None, send_to_twitter: bool = None, send_to_facebook: bool = None)
 
    Create a Post (Neue Post Format)
 
@@ -230,7 +230,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: reblog_post(...)
+.. py:method:: reblog_post(blog_identifier: str, parent_tumblelog_uuid: str, parent_post_id: int, reblog_key: str, content: list, *, layout: list = None, state: str = None, publish_on: str = None, tags: str = None, source_url: str = None, send_to_twitter: bool = None, send_to_facebook: bool = None, hide_trail: bool = None)
 
    Reblog a post (Neue Post Format)
 
@@ -265,7 +265,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: fetch_post(...)
+.. py:method:: fetch_post(blog_identifier: str, post_id: int)
 
    Fetch an individual post
 
@@ -278,7 +278,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: edit_post(...)
+.. py:method:: edit_post(blog_identifier: str, post_id: int, content: list, *, layout: list = None, state: str = None, publish_on: str = None, tags: str = None, source_url: str = None, send_to_twitter: bool = None, send_to_facebook: bool = None)
 
    Editing a Post (in NPF format)
 
@@ -309,7 +309,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: edit_reblog(...)
+.. py:method:: edit_reblog(blog_identifier: str, post_id: int, parent_tumblelog_uuid: str, parent_post_id: int, reblog_key: str, content: list, *, layout: list = None, state: str = None, publish_on: str = None, tags: str = None, source_url: str = None, send_to_twitter: bool = None, send_to_facebook: bool = None, hide_trail: bool = None)
 
    Editing a Reblogged Post (in NPF format)
 
@@ -348,7 +348,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: delete_post(...)
+.. py:method:: delete_post(blog_identifier: str, id: int)
 
    Delete a Post
 
@@ -361,7 +361,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_user_info(...)
+.. py:method:: get_user_info()
 
    Get a User's Information
 
@@ -372,7 +372,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_user_dashboard(...)
+.. py:method:: get_user_dashboard(*, limit: int = None, offset: int = None, type_: str = None, since_id: int = None, reblog_info: bool = None, notes_info: bool = None)
 
    Retrieve a User's Dashboard
 
@@ -382,8 +382,8 @@ public API
    :type limit: int or None
    :param offset: Post number to start at
    :type offset: int or None
-   :param type: The type of post to return. Specify one of the following: text, photo, quote, link, chat, audio, video, answer
-   :type type: str or None
+   :param type\_: The type of post to return. Specify one of the following: text, photo, quote, link, chat, audio, video, answer
+   :type type\_: str or None
    :param since_id: Return posts that have appeared after this ID; Use this parameter to page through the results: first get a set of posts, and then get posts since the last ID of the previous set.
    :type since_id: int or None
    :param reblog_info: Indicates whether to return reblog information (specify true or false). Returns the various `reblogged_` fields.
@@ -395,7 +395,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_user_likes(...)
+.. py:method:: get_user_likes(*, limit: int = None, offset: int = None, before: int = None, after: int = None)
 
    Retrieve a User's Likes
 
@@ -414,7 +414,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: get_user_following(...)
+.. py:method:: get_user_following(*, limit: int = None, offset: int = None)
 
    Retrieve the Blogs a User Is Following
 
@@ -429,7 +429,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: follow_blog(...)
+.. py:method:: follow_blog(url: str)
 
    Follow a blog
 
@@ -440,7 +440,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: unfollow_blog(...)
+.. py:method:: unfollow_blog(url: str)
 
    Unfollow a blog
 
@@ -451,7 +451,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: like_post(...)
+.. py:method:: like_post(id: int, reblog_key: str)
 
    Like a Post
 
@@ -464,7 +464,7 @@ public API
    :raises SyntaxError: if required parameter is missing
    :raises ValueError: if supplied parameter fails validation
 
-.. py:method:: unlike_post(...)
+.. py:method:: unlike_post(id: int, reblog_key: str)
 
    Unlike a Post
 
