@@ -8,9 +8,11 @@ from oauthlib.oauth1 import Client
 from oauthlib.common import urldecode, add_params_to_uri
 
 from .extensions.base import Extension
-from ._tracers import AIOTumblrDebugger
+from aiotumblr.utils.tracers import AIOTumblrDebugger
 
 import logging
+
+__all__ = ['TumblrClient']
 
 log = logging.getLogger(__name__)
 

@@ -4,6 +4,14 @@ from typing import Dict, Any, Tuple, Union
 import forge
 
 
+def format_docstring_for_sphinx(docstring: str, indent: int = 3) -> str:
+    lines = docstring.split('\n')
+    lines_new = []
+    for line in lines:
+        lines_new.append(f"{indent * ' '}{line}") if len(line.strip()) > 0 else lines_new.append('')
+    return '\n'.join(lines_new)
+
+
 def format_parameter(param):
     if isinstance(param, bool):
         return str(param).lower()
@@ -47,7 +55,7 @@ def parse_method_info(method_info: Dict[str, Any]) -> Tuple[Dict[str, Union[list
 
 def generate_docstring(params, body, method_info) -> str:
     ds_url_params = '\n'.join(f""":param {key}: {url_param['description']}
-:type {key} {url_param['type'].__name__}""" for key, url_param in method_info['url_parameters'].items())
+:type {key}: {url_param['type'].__name__}""" for key, url_param in method_info['url_parameters'].items())
 
     required_params = []
     for key in params['required']:
@@ -77,15 +85,16 @@ def generate_docstring(params, body, method_info) -> str:
 :type {key}: {opt_body_arg['type'].__name__} or None""")
     ds_optional_body_args = '\n'.join(optional_body_args)
 
-    ds = f"""{method_info['description_summary']}"""
+    ds = f"""{method_info['description_summary']}\n"""
 
     if method_info['description_long']:
-        ds += f"""\n\n{method_info['description_long']}"""
+        ds += f"""\n{method_info['description_long']}\n"""
 
-    ds += f"""\n\n{ds_url_params}"""
+    if ds_url_params:
+        ds += f"""\n{ds_url_params}"""
 
     if ds_required_params:
-        ds += f"""{ds_required_params}"""
+        ds += f"""\n{ds_required_params}"""
 
     if ds_optional_params:
         ds += f"""\n{ds_optional_params}"""
@@ -96,7 +105,7 @@ def generate_docstring(params, body, method_info) -> str:
     if ds_optional_body_args:
         ds += f"""\n{ds_optional_body_args}"""
 
-    ds += f""":return: API response for {method_info['method_name']}
+    ds += f"""\n:return: API response for {method_info['method_name']}
 :rtype: `aiohttp.ClientResponse`
 :raises SyntaxError: if required parameter is missing
 :raises ValueError: if supplied parameter fails validation

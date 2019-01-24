@@ -1,4 +1,7 @@
 # encoding=utf-8
+from aiotumblr.extensions.utils import parse_method_info, generate_docstring, format_docstring_for_sphinx
+
+__all__ = ['POST_TYPES', 'NPF_POST_STATES', 'Extension']
 
 # Base endpoint design:
 # {
@@ -56,6 +59,8 @@ NPF_POST_STATES = [
 
 
 class Extension(object):
+    prefix = ''
+
     @classmethod
     def register(cls, client):
         raise NotImplementedError()
@@ -63,3 +68,15 @@ class Extension(object):
     @classmethod
     def unregister(cls, client):
         raise NotImplementedError()
+
+    @classmethod
+    def generate_docs(cls):
+        raise NotImplementedError()
+
+    @classmethod
+    def _generate_doc(cls, method_info):
+        params, body = parse_method_info(method_info)
+        method_doc = generate_docstring(params, body, method_info)
+        doc = f".. py:method:: {method_info['method_name']}(...)\n\n"  # FIXME
+        doc += format_docstring_for_sphinx(method_doc, indent=3)
+        return doc

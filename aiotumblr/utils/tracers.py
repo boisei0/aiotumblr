@@ -2,6 +2,8 @@ import logging
 
 from aiohttp.tracing import TraceConfig, TraceRequestStartParams, TraceRequestEndParams, TraceRequestRedirectParams
 
+__all__ = ['AIOTumblrDebugger']
+
 
 class AIOTumblrDebugger(TraceConfig):
     def __init__(self, logger: logging.Logger):

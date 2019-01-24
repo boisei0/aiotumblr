@@ -69,7 +69,7 @@ _ENDPOINTS = [
         'method_name': 'get_blog_likes',
         'description_summary': 'Retrieve Blog\'s Likes',
         'description_long': 'Retrieve publicly exposed likes from a blog.\n\nNote: Only one of the optional '
-                            'parameters `offset`, `before` or `after` can be used\nNote: When requesting posts with '
+                            'parameters `offset`, `before` or `after` can be used.\n\nNote: When requesting posts with '
                             'an offset above 1000, switch to `before` or `after`.',
         'http_method': 'GET',
         'endpoint': 'blog/{blog_identifier}/likes',
@@ -533,7 +533,7 @@ _ENDPOINTS = [
     },
     {
         'method_name': 'reblog_post',
-        'description_summary': 'Reblog a post',
+        'description_summary': 'Reblog a post (Neue Post Format)',
         'description_long': None,
         'http_method': 'POST',
         'endpoint': 'blog/{blog_identifier}/posts',
@@ -1107,3 +1107,14 @@ class PublicAPI(Extension):
     def unregister(cls, client):
         for method_info in _ENDPOINTS:
             delattr(client, method_info['method_name'])
+
+    @classmethod
+    def generate_docs(cls):
+        doc = f"""{len(cls.prefix) * '='}====
+{cls.prefix} API
+{len(cls.prefix) * '='}====\n\n"""
+        for method_info in _ENDPOINTS:
+            doc += cls._generate_doc(method_info)
+            doc += '\n'
+
+        return doc
