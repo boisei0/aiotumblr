@@ -6,6 +6,8 @@ Welcome to aiotumblr's documentation!
    :caption: Contents:
 
    public
+   internal_blog
+   internal_conversations
 
 
 Indices and tables
