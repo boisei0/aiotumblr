@@ -89,7 +89,7 @@ class DocGenCommand(Command):
 
         if self.extension:
             for ext_path, class_name in self.extension:
-                mod = import_module(f'aiotumblr_ext.extensions.{ext_path}')
+                mod = import_module(f'aiotumblr.extensions.{ext_path}')
                 api = getattr(mod, class_name)
 
                 if not issubclass(api, Extension):

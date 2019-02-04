@@ -7,7 +7,8 @@ import aiohttp
 from oauthlib.oauth1 import Client
 from oauthlib.common import urldecode, add_params_to_uri
 
-from aiotumblr.extensions import Extension
+from .extensions.base import Extension
+from aiotumblr.utils.tracers import AIOTumblrDebugger
 
 import logging
 
@@ -26,7 +27,6 @@ class TumblrClient(object):
                  resource_owner_secret: Optional[str] = None, callback_uri: Optional[str] = None,
                  oauth_verifier: Optional[str] = None, debug_mode: Optional[bool] = None):
         if debug_mode:
-            from aiotumblr.utils.tracers import AIOTumblrDebugger
             self.session = aiohttp.ClientSession(trace_configs=[AIOTumblrDebugger(logger=log)])
         else:
             self.session = aiohttp.ClientSession()

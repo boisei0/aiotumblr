@@ -1,11 +1,11 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 import importlib
 
 
-cmdclass = {}
+cmdclass = None
 
 try:
-    import jinja2
+    import jinja2  # Available when installed in dev mode
 except ImportError:
     pass
 else:
@@ -16,7 +16,7 @@ else:
 
 setup(
     name='AIOTumblr',
-    version='0.2',
+    version='0.1',
     description='Tumblr API client on top of aiohttp and oauthlib',
     author='Lena',
     author_email='arlena@hubsec.eu',
@@ -25,13 +25,7 @@ setup(
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 3.7'
     ],
-    # packages=['aiotumblr'],
-    packages=find_packages(),
-    install_requires=['aiohttp', 'oauthlib', 'python-forge', 'aiotumblr_public>=0.1.1'],
-    extras_requires={
-        'docs': ['sphinx', 'jinja2'],
-    },
-    setup_requires=['jinja2'],
-    python_requires='>=3.7',
-    cmdclass=cmdclass,
+    packages=['aiotumblr'],
+    install_requires=['aiohttp', 'oauthlib', 'python-forge'],
+    cmdclass=cmdclass
 )
