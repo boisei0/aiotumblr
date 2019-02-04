@@ -1,13 +1,13 @@
-Welcome to AIOTumblr's documentation!
+Welcome to aiotumblr's documentation!
 =====================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   extensions
-
    public
+   internal_blog
+   internal_conversations
 
 
 Indices and tables

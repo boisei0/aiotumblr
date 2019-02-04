@@ -73,19 +73,20 @@ class DocGenCommand(Command):
             self.output_dir = os.path.join(os.path.dirname(_library_root_path), 'docs', 'source')
 
     def run(self):
+        from aiotumblr.extensions.public import PublicAPI
+
         toc_tree_contents = []
 
-        # TODO: Treat this as a regular extension, and use `include_base` purely for the base or, make it static?
         if self.include_base:
-            from aiotumblr_ext.extensions.public import PublicAPIExtension
-            docs = PublicAPIExtension.generate_docs()
+            # TODO: include docs for the core library too, or include them standard/static?
+            docs = PublicAPI.generate_docs()
             if not self.dry_run:
-                with open(os.path.join(self.output_dir, f'{PublicAPIExtension.prefix}.rst'), 'w') as fp:
-                    self.announce(f'Writing documentation for {PublicAPIExtension.prefix!r}...')
+                with open(os.path.join(self.output_dir, f'{PublicAPI.prefix}.rst'), 'w') as fp:
+                    self.announce(f'Writing documentation for {PublicAPI.prefix!r}...')
                     fp.write(docs)
-                    toc_tree_contents.append(PublicAPIExtension.prefix)
+                    toc_tree_contents.append(PublicAPI.prefix)
             else:
-                self.announce(f'Skipping writing documentation for {PublicAPIExtension.prefix!r} (dry run)...')
+                self.announce(f'Skipping writing documentation for {PublicAPI.prefix!r} (dry run)...')
 
         if self.extension:
             for ext_path, class_name in self.extension:
@@ -116,14 +117,12 @@ class DocGenCommand(Command):
                 with open(os.path.join(self.output_dir, 'index.rst'), 'w') as fp:
                     self.announce('Writing index...')
                     fp.writelines([
-                        'Welcome to AIOTumblr\'s documentation!\n',
+                        'Welcome to aiotumblr\'s documentation!\n',
                         '=====================================\n',
                         '\n',
                         '.. toctree::\n',
                         '   :maxdepth: 2\n',
                         '   :caption: Contents:\n',
-                        '\n',
-                        'extensions',
                         '\n',
                         *_indices,
                         '\n',
