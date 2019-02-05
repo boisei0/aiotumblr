@@ -1,5 +1,5 @@
 # aiotumblr
-The following repository contains the code for `aiotumblr`, an OAuth 1.0a API client for Tumblr that runs on top of
+The following repository contains the code for `aiotumblr_core`, an OAuth 1.0a API client for Tumblr that runs on top of
 `aiohttp`. As a result, the client won't block when running requests.
 
 ## Design choices

@@ -2,7 +2,7 @@
 from typing import Callable
 from forge import repr_callable
 
-from aiotumblr.extensions.utils import parse_method_info, generate_docstring, format_docstring_for_sphinx
+from aiotumblr_core.extensions.utils import parse_method_info, generate_docstring, format_docstring_for_sphinx
 
 __all__ = ['POST_TYPES', 'NPF_POST_STATES', 'Extension']
 

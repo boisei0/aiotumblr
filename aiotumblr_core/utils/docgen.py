@@ -1,5 +1,4 @@
 # encoding=utf-8
-import sys
 import logging
 import os.path
 from importlib import import_module
@@ -7,18 +6,12 @@ from importlib import import_module
 from setuptools import Command
 from distutils.errors import DistutilsOptionError
 
-from aiotumblr.extensions.base import Extension
+from aiotumblr_core.extensions.base import Extension
 
 __all__ = ['DocGenTypeException', 'DocGenCommand']
 
 log = logging.getLogger(__name__)
 _library_root_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-
-try:
-    from jinja2 import Template
-except ImportError:  # Jinja2 is included with sphinx, is available as dev-package when doing documentation
-    log.error('DocGen requires Jinja2 to be installed')
-    raise sys.exit(1)
 
 
 class DocGenTypeException(TypeError):
@@ -73,20 +66,19 @@ class DocGenCommand(Command):
             self.output_dir = os.path.join(os.path.dirname(_library_root_path), 'docs', 'source')
 
     def run(self):
-        from aiotumblr.extensions.public import PublicAPI
-
         toc_tree_contents = []
 
         if self.include_base:
-            # TODO: include docs for the core library too, or include them standard/static?
-            docs = PublicAPI.generate_docs()
-            if not self.dry_run:
-                with open(os.path.join(self.output_dir, f'{PublicAPI.prefix}.rst'), 'w') as fp:
-                    self.announce(f'Writing documentation for {PublicAPI.prefix!r}...')
-                    fp.write(docs)
-                    toc_tree_contents.append(PublicAPI.prefix)
-            else:
-                self.announce(f'Skipping writing documentation for {PublicAPI.prefix!r} (dry run)...')
+            # # TODO: include docs for the core library too, or include them standard/static?
+            # docs = PublicAPI.generate_docs()
+            # if not self.dry_run:
+            #     with open(os.path.join(self.output_dir, f'{PublicAPI.prefix}.rst'), 'w') as fp:
+            #         self.announce(f'Writing documentation for {PublicAPI.prefix!r}...')
+            #         fp.write(docs)
+            #         toc_tree_contents.append(PublicAPI.prefix)
+            # else:
+            #     self.announce(f'Skipping writing documentation for {PublicAPI.prefix!r} (dry run)...')
+            raise NotImplemented
 
         if self.extension:
             for ext_path, class_name in self.extension:
@@ -96,8 +88,8 @@ class DocGenCommand(Command):
                 if not issubclass(api, Extension):
                     self.warn(str(api))
                     raise DocGenTypeException('Extension passed with `--extension` should be a subclass of '
-                                              '`aiotumblr.extensions.base.Exception`. Got passed an instance of type '
-                                              f'{type(api)!r} instead.')
+                                              '`aiotumblr_core.extensions.base.Exception`. Got passed an instance of '
+                                              f'type {type(api)!r} instead.')
 
                 docs = api.generate_docs()
                 if not self.dry_run:

@@ -1,2 +1,0 @@
-#!/bin/bash
-ansible-playbook -i "localhost," --connection=local scripts/play_encrypt.yml

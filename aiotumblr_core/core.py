@@ -7,8 +7,8 @@ import aiohttp
 from oauthlib.oauth1 import Client
 from oauthlib.common import urldecode, add_params_to_uri
 
-from .extensions.base import Extension
-from aiotumblr.utils.tracers import AIOTumblrDebugger
+from aiotumblr_core.extensions import Extension
+from aiotumblr_core.utils.tracers import AIOTumblrDebugger
 
 import logging
 
