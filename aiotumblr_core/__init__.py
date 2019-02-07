@@ -2,5 +2,6 @@
 from .core import TumblrClient
 from .extensions import Extension
 
-__all__ = ['TumblrClient', 'Extension']
+from . import extensions, utils
 
+__all__ = ['TumblrClient', 'Extension', 'extensions', 'utils', ]

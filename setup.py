@@ -1,9 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(
     name='AIOTumblr-core',
-    version='0.1',
+    version='0.1.3.1',
     description='Tumblr API client on top of aiohttp and oauthlib',
     author='Lena',
     author_email='arlena@hubsec.eu',
@@ -12,6 +12,6 @@ setup(
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 3.7'
     ],
-    packages=['aiotumblr_core'],
+    packages=find_packages(),
     install_requires=['aiohttp', 'oauthlib', 'python-forge'],
 )
