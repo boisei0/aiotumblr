@@ -262,6 +262,11 @@ def create_method(client, params, body, method_info):
                     method_info['http_method'], endpoint, params=params_signature, json=body_signature,
                     headers={'content-type': method_info['content_type']}
                 )
+            elif method_info['body_type'] is None and method_info['content_type'] is None:
+                # We're dealing with one of the few endpoints that have POSTs (likely) without a body. Skip the body.
+                resp = await self.signed_request(
+                    method_info['http_method'], endpoint, params=params_signature
+                )
             else:
                 raise RuntimeError(
                     f'Unknown body type {method_info["body_type"]!r} in method {method_info["method_name"]!r}'

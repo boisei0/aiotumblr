@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='AIOTumblr-core',
-    version='0.1.4.3',
+    version='0.1.4.4',
     description='Core library for aiotumblr: Tumblr API client on top of aiohttp and oauthlib',
     author='Lena',
     author_email='arlena@hubsec.eu',
